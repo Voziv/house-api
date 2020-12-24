@@ -23,7 +23,7 @@ LABEL org.label-schema.build-date=$BUILD_DATE \
       org.label-schema.vendor="Voziv" \
       org.label-schema.version=$VERSION \
       org.label-schema.schema-version="1.0" \
-      com.voziv.docker.dockerfile="tools/docker/app/Dockerfile"
+      com.voziv.docker.dockerfile="tools/docker/app/app.docker"
 
 WORKDIR /var/www/app
 

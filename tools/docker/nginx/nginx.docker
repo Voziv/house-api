@@ -1,4 +1,22 @@
 FROM nginx:alpine
+MAINTAINER Lee Robert (Voziv) "docker@voziv.com"
+
+
+ARG VCS_REF
+ARG VERSION
+ARG BUILD_DATE
+
+# Metadata
+LABEL org.label-schema.build-date=$BUILD_DATE \
+      org.label-schema.name="nginx php-fpm proxy" \
+      org.label-schema.description="Simple nginx container to foward api requests to php-fpm" \
+      org.label-schema.url="https://github.com/Voziv/house-api" \
+      org.label-schema.vcs-url="https://github.com/Voziv/house-api" \
+      org.label-schema.vcs-ref=$VCS_REF \
+      org.label-schema.vendor="Voziv" \
+      org.label-schema.version=$VERSION \
+      org.label-schema.schema-version="1.0" \
+      com.voziv.docker.dockerfile="tools/docker/nginx/nginx.docker"
 
 RUN mkdir -p /etc/nginx/includes
 

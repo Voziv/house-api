@@ -5,17 +5,19 @@ on:
     tags:
       - '*'
     paths:
+      - '.github/workflows/nginx_ci.yml'
       - 'tools/docker/nginx/**'
   pull_request:
     branches:
       - 'main'
     paths:
+      - '.github/workflows/nginx_ci.yml'
       - 'tools/docker/nginx/**'
   workflow_dispatch:
 
 
 env:
-  DOCKERFILE: "tools/docker/nginx/nginx.docker"
+  DOCKERFILE: "./tools/docker/nginx/nginx.docker"
   DOCKER_BUILDKIT: 1
   DOCKER_IMAGE: "gcr.io/generic-website-hosting/house-api-nginx"
   DOCKER_LATEST: "gcr.io/generic-website-hosting/house-api-nginx:latest"

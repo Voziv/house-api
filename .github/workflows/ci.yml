@@ -5,17 +5,19 @@ on:
     tags-ignore:
       - 'nginx-*'
     paths-ignore:
+      - '.github/workflows/nginx_ci.yml'
       - 'tools/docker/nginx/**'
   pull_request:
     branches:
       - 'main'
     paths-ignore:
+      - '.github/workflows/nginx_ci.yml'
       - 'tools/docker/nginx/**'
   workflow_dispatch:
 
 
 env:
-  DOCKERFILE: "tools/docker/app/app.docker"
+  DOCKERFILE: "./tools/docker/app/app.docker"
   DOCKER_BUILDKIT: 1
   DOCKER_IMAGE: "gcr.io/generic-website-hosting/house-api"
   DOCKER_LATEST: "gcr.io/generic-website-hosting/house-api:latest"
