@@ -1,0 +1,7 @@
+FROM nginx:alpine
+
+RUN mkdir -p /etc/nginx/includes
+
+COPY tools/docker/nginx/default-server-config.nginx /etc/nginx/includes/default-server-config.conf
+COPY tools/docker/nginx/fastcgi_params.nginx /etc/nginx/fastcgi_params
+COPY tools/docker/nginx/site.template.nginx /etc/nginx/templates/default.conf.template

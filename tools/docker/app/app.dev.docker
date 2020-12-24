@@ -1,0 +1,19 @@
+FROM gcr.io/generic-website-hosting/house-api:latest
+
+ARG DOCKER_XDEBUG_PORT
+ARG DOCKER_XDEBUG_HEADER
+
+RUN set -xe \
+    && docker-php-ext-enable xdebug \
+    && echo "xdebug.remote_port=${DOCKER_XDEBUG_PORT}" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo "xdebug.remote_addr_header=${DOCKER_XDEBUG_HEADER}" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo 'xdebug.remote_enable=1' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo 'xdebug.remote_autostart=0' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo 'xdebug.profiler_enable=0' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo 'xdebug.profiler_enable_trigger=1' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo 'xdebug.profiler_output_dir=/var/www/app/data/trace' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo 'xdebug.remote_connect_back=1' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo 'xdebug.auto_trace=0' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo 'xdebug.trace_format=1' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo 'xdebug.trace_enable_trigger=1' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo 'xdebug.trace_output_dir=/var/www/app/data/trace' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini

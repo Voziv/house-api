@@ -1,0 +1,73 @@
+on:
+  push:
+    branches:
+      - 'main'
+    tags-ignore:
+      - 'nginx-*'
+    paths-ignore:
+      - 'tools/docker/nginx/**'
+  pull_request:
+    branches:
+      - 'main'
+    paths-ignore:
+      - 'tools/docker/nginx/**'
+  workflow_dispatch:
+
+
+env:
+  DOCKERFILE: "tools/docker/app/app.docker"
+  DOCKER_BUILDKIT: 1
+  DOCKER_IMAGE: "gcr.io/generic-website-hosting/house-api"
+  DOCKER_LATEST: "gcr.io/generic-website-hosting/house-api:latest"
+  DOCKER_REGISTRY_URL: "https://gcr.io"
+  MAIN_BRANCH_REF: 'refs/heads/main'
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: "Check out repository"
+        uses: actions/checkout@v2
+
+      - name: "Authenticate with docker registry"
+        run: echo "${{ secrets.GCP_SERVICE_ACCOUNT_JSON}}" | docker login -u _json_key --password-stdin "${DOCKER_REGISTRY_URL}"
+
+      - name: "Set docker branch tag"
+        run: |
+          # Take branch name and turn it into a sane docker image tag
+          # eg:
+          # refs/heads/main -> main
+          # refs/tags/0.0.1 -> 0.0.1
+          echo "DOCKER_TAG=${DOCKER_IMAGE}:${GITHUB_REF##*/}" >> $GITHUB_ENV
+
+      - name: "Pull down latest?"
+        run: docker pull ${DOCKER_TAG} || true
+
+      - name: "Docker build"
+        run: |
+          docker build \
+            --progress=plain \
+            --cache-from="${DOCKER_TAG}" \
+            --build-arg BUILDKIT_INLINE_CACHE=1 \
+            --build-arg BUILD_DATE=`TZ="America/Toronto" date +"%Y-%m-%dT%H:%M:%SZ"` \
+            --build-arg VCS_REF=`${GITHUB_SHA}` \
+            --tag "${DOCKER_TAG}" \
+            --file "${DOCKER_FILE}" \
+            .
+
+      - name: "Run tests?"
+        run: |
+          echo "Tests will run here someday.... or not"
+#          docker run ${DOCKER_TAG} -- su-exec www-data composer install
+#          docker run ${DOCKER_TAG} -- su-exec www-data composer install
+#          docker run ${DOCKER_TAG} -- su-exec www-data php vendor/bin/phpunit
+
+      - name: "Docker build"
+        run: |
+          docker push ${DOCKER_TAG}
+
+      - name: "Tag & Push Latest"
+        if: github.ref == '${{ env.MAIN_BRANCH_REF }}'
+        run: |
+          docker tag ${DOCKER_TAG} ${DOCKER_LATEST}
+          docker push ${DOCKER_LATEST}

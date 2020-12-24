@@ -1,0 +1,108 @@
+# Just copying composer from here
+FROM composer:latest as composer_build
+
+#
+# Main Docker Image
+#
+FROM php:8-fpm-alpine
+
+MAINTAINER Lee Robert (Voziv) "docker@voziv.com"
+
+
+ARG VCS_REF
+ARG VERSION
+ARG BUILD_DATE
+
+# Metadata
+LABEL org.label-schema.build-date=$BUILD_DATE \
+      org.label-schema.name="House API" \
+      org.label-schema.description="Simple API for handling house related data and automation" \
+      org.label-schema.url="https://github.com/Voziv/house-api" \
+      org.label-schema.vcs-url="https://github.com/Voziv/house-api" \
+      org.label-schema.vcs-ref=$VCS_REF \
+      org.label-schema.vendor="Voziv" \
+      org.label-schema.version=$VERSION \
+      org.label-schema.schema-version="1.0" \
+      com.voziv.docker.dockerfile="tools/docker/app/Dockerfile"
+
+WORKDIR /var/www/app
+
+
+##########################
+# Install Deps for the app
+##########################
+ENV PERSISTENT_DEPS \
+        su-exec \
+        mysql-client \
+        pcre-dev \
+        libxml2-dev \
+        libzip-dev
+
+RUN set -eux; \
+    mkdir -p /var/www/app; \
+    chown www-data:www-data /var/www/app; \
+    apk add --no-cache --virtual .persistent-deps ${PERSISTENT_DEPS};
+
+########################
+# Install PHP Extensions
+########################
+RUN set -eux; \
+    apk add --no-cache --virtual .build-deps ${PHPIZE_DEPS}; \
+    \
+    pecl install redis xdebug; \
+    docker-php-ext-install \
+        pdo_mysql \
+        mysqli \
+        xml \
+        zip \
+    ; \
+    docker-php-ext-enable \
+     mysqli \
+     pdo_mysql \
+     redis \
+     xml \
+     zip \
+    ; \
+    apk del --no-network .build-deps;
+
+COPY composer.json /var/www/app/composer.json
+COPY composer.lock /var/www/app/composer.lock
+
+COPY --from=composer_build /usr/bin/composer /usr/bin/composer
+
+RUN su-exec www-data composer install \
+        --no-interaction \
+        --prefer-dist \
+        --no-scripts \
+        --no-dev \
+        --no-autoloader \
+        --ignore-platform-reqs \
+        --no-cache
+
+COPY --chown=www-data:www-data . /var/www/app
+
+RUN mkdir -p bootstrap/cache && su-exec www-data composer dumpautoload -o
+
+RUN set -eux; \
+        mkdir -p bootstrap/cache; \
+        mkdir -p storage/app; \
+        mkdir -p storage/framework/cache; \
+        mkdir -p storage/framework/sessions; \
+        mkdir -p storage/framework/testing; \
+        mkdir -p storage/framework/views; \
+        mkdir -p storage/logs; \
+        touch storage/logs/laravel.log; \
+        chown -R www-data:www-data /var/www/app/storage; \
+        \
+        rm -f .env; \
+        \
+        mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"; \
+        su-exec www-data composer dumpautoload -o;
+#
+# Custom entrypoint.
+#
+COPY tools/docker/app/app-entrypoint.sh /usr/local/bin/app-entrypoint.sh
+RUN chmod +x /usr/local/bin/app-entrypoint.sh
+
+ENTRYPOINT ["app-entrypoint.sh"]
+CMD ["app-entrypoint.sh"]
