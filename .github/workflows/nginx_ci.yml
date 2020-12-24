@@ -42,19 +42,17 @@ jobs:
           # refs/tags/0.0.1 -> 0.0.1
           echo "DOCKER_TAG=${DOCKER_IMAGE}:${GITHUB_REF##*/}" >> $GITHUB_ENV
 
-      - name: "Pull down latest?"
-        run: docker pull ${DOCKER_TAG} || true
-
       - name: "Docker build"
         run: |
           docker build \
             --progress=plain \
             --cache-from="${DOCKER_TAG}" \
+            --cache-from="${DOCKER_LATEST}" \
             --build-arg BUILDKIT_INLINE_CACHE=1 \
             --build-arg BUILD_DATE=`TZ="America/Toronto" date +"%Y-%m-%dT%H:%M:%SZ"` \
             --build-arg VCS_REF=`${GITHUB_SHA}` \
             --tag "${DOCKER_TAG}" \
-            --file "${DOCKER_FILE}" \
+            --file "${DOCKERFILE}" \
             .
 
       - name: "Run tests?"
