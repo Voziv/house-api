@@ -6,4 +6,3 @@
 .styleci.yml
 docker-compose.yml
 tmp/
-tools/
