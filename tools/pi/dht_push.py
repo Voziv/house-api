@@ -20,6 +20,7 @@ DHT_PIN  = 4
 
 # How long to wait (in seconds) between measurements.
 FREQUENCY_SECONDS      = 60
+SENSOR_FAILURE_RETRY_SECONDS  = 2
 
 # API to post information to
 API_TOKEN      = 'voziv_dev_token'
@@ -40,7 +41,7 @@ while True:
     # This might happen if the CPU is under a lot of load and the sensor
     # can't be reliably read (timing is critical to read the sensor).
     if humidity is None or temp is None:
-        time.sleep(2)
+        time.sleep(SENSOR_FAILURE_RETRY_SECONDS)
         continue
 
     print('Temperature: {0:0.1f} C'.format(temp))
