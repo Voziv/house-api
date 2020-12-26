@@ -57,6 +57,11 @@ jobs:
           # refs/tags/0.0.1 -> 0.0.1
           echo "DOCKER_TAG=${DOCKER_IMAGE}:${GITHUB_REF##*/}" >> $GITHUB_ENV
 
+      - name: "Docker pull"
+        run: |
+          docker pull "${DOCKER_TAG}" || true
+          docker pull "${DOCKER_LATEST}" || true
+
       - name: "Docker build"
         run: |
           docker build \
