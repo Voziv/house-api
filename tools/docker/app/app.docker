@@ -105,4 +105,4 @@ COPY tools/docker/app/app-entrypoint.sh /usr/local/bin/app-entrypoint.sh
 RUN chmod +x /usr/local/bin/app-entrypoint.sh
 
 ENTRYPOINT ["app-entrypoint.sh"]
-CMD ["app-entrypoint.sh"]
+CMD ["php", "-a"]
