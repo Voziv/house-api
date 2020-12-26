@@ -1,6 +1,7 @@
 .editorconfig
 .env
 .env.example
+.github
 .gitignore
 .phpunit.result.cache
 .styleci.yml
