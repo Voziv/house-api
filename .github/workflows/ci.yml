@@ -82,7 +82,7 @@ jobs:
 #          docker run ${DOCKER_TAG} -- su-exec www-data composer install
 #          docker run ${DOCKER_TAG} -- su-exec www-data php vendor/bin/phpunit
 
-      - name: "Docker build"
+      - name: "Push up docker tag"
         run: |
           docker push ${DOCKER_TAG}
 
