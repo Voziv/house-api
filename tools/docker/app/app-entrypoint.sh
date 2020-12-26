@@ -46,7 +46,7 @@ log "Server is configured to be '${role}'"
 if [ "$role" = "fpm" ]; then
 
     log "Passing off to php-fpm..."
-    exec $suexeccommand php-fpm
+    exec php-fpm
 
 elif [ "$role" = "queue" ]; then
 
