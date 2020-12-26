@@ -5,13 +5,28 @@ on:
     tags-ignore:
       - 'nginx-*'
     paths-ignore:
+      - '.editorconfig'
+      - '.env'
+      - '.env.example'
       - '.github/workflows/nginx_ci.yml'
+      - '.gitignore'
+      - '.phpunit.result.cache'
+      - '.styleci.yml'
+      - 'docker-compose.yml'
+      - 'tmp/**'
       - 'tools/docker/nginx/**'
   pull_request:
     branches:
       - 'main'
     paths-ignore:
+      - '.editorconfig'
+      - '.env'
+      - '.env.example'
       - '.github/workflows/nginx_ci.yml'
+      - '.gitignore'
+      - '.styleci.yml'
+      - 'docker-compose.yml'
+      - 'tmp/**'
       - 'tools/docker/nginx/**'
   workflow_dispatch:
 
