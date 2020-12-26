@@ -60,14 +60,12 @@ jobs:
       - name: "Docker pull"
         run: |
           docker pull "${DOCKER_TAG}" || true
-          docker pull "${DOCKER_LATEST}" || true
 
       - name: "Docker build"
         run: |
           docker build \
             --progress=plain \
-            --cache-from="${DOCKER_TAG}" \
-            --cache-from="${DOCKER_LATEST}" \
+            --cache-from "${DOCKER_TAG}" \
             --build-arg BUILDKIT_INLINE_CACHE=1 \
             --build-arg BUILD_DATE=`TZ="America/Toronto" date +"%Y-%m-%dT%H:%M:%SZ"` \
             --build-arg VCS_REF=`${GITHUB_SHA}` \
