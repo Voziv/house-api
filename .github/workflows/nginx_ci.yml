@@ -42,25 +42,21 @@ jobs:
           # refs/tags/0.0.1 -> 0.0.1
           echo "DOCKER_TAG=${DOCKER_IMAGE}:${GITHUB_REF##*/}" >> $GITHUB_ENV
 
+      - name: "Docker pull"
+        run: |
+          docker pull "${DOCKER_TAG}" || true
+
       - name: "Docker build"
         run: |
           docker build \
-            --progress=plain \
-            --cache-from="${DOCKER_TAG}" \
-            --cache-from="${DOCKER_LATEST}" \
-            --build-arg BUILDKIT_INLINE_CACHE=1 \
+            --cache-from "${DOCKER_TAG}" \
             --build-arg BUILD_DATE=`TZ="America/Toronto" date +"%Y-%m-%dT%H:%M:%SZ"` \
             --build-arg VCS_REF=`${GITHUB_SHA}` \
             --tag "${DOCKER_TAG}" \
             --file "${DOCKERFILE}" \
             .
 
-      - name: "Run tests?"
-        run: |
-          echo "Run tests????"
-          # docker run ${DOCKER_TAG} -- vendor/bin/phpunit
-
-      - name: "Docker build"
+      - name: "Push tag to repository"
         run: |
           docker push ${DOCKER_TAG}
 
