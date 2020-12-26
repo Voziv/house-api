@@ -23,7 +23,7 @@ services:
 #    image: "gcr.io/generic-website-hosting/nginx-php"
     build:
       context: .
-      dockerfile: tools/docker/app/nginx.docker
+      dockerfile: tools/docker/nginx/nginx.docker
     environment:
       PHP_FPM_HOST: "app"
       VIRTUAL_HOST: "house-api.test"
@@ -49,7 +49,7 @@ services:
     volumes:
       - 'house-api-redis:/data'
   mailhog:
-    image: 'mailhog/mailhog:latest'
+    image: 'mailhog/mailhog:v1.0.0'
     ports:
       - 1025:1025
       - 8025:8025
