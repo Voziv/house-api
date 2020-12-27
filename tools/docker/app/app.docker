@@ -33,7 +33,6 @@ WORKDIR /var/www/app
 ##########################
 ENV PERSISTENT_DEPS \
         su-exec \
-        mysql-client \
         pcre-dev \
         libxml2-dev \
         libzip-dev
@@ -81,22 +80,9 @@ RUN su-exec www-data composer install \
 
 COPY --chown=www-data:www-data . /var/www/app
 
-RUN mkdir -p bootstrap/cache && su-exec www-data composer dumpautoload -o
-
 RUN set -eux; \
-        mkdir -p bootstrap/cache; \
-        mkdir -p storage/app; \
-        mkdir -p storage/framework/cache; \
-        mkdir -p storage/framework/sessions; \
-        mkdir -p storage/framework/testing; \
-        mkdir -p storage/framework/views; \
-        mkdir -p storage/logs; \
-        touch storage/logs/laravel.log; \
-        chown -R www-data:www-data /var/www/app/storage; \
-        \
-        rm -f .env; \
-        \
         mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"; \
+        rm -f .env; || true \
         su-exec www-data composer dumpautoload -o;
 #
 # Custom entrypoint.
