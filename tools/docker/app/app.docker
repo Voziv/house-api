@@ -82,7 +82,7 @@ COPY --chown=www-data:www-data . /var/www/app
 
 RUN set -eux; \
         mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"; \
-        rm -f .env; || true \
+        rm -f .env || true; \
         su-exec www-data composer dumpautoload -o;
 #
 # Custom entrypoint.
